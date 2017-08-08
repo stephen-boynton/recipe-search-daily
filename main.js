@@ -5,6 +5,7 @@ let url = `https://proxy.calweb.xyz/http://www.recipepuppy.com/api/?${searchRequ
 const pixaKey = "6122441-6f3c40a45d200b1e224203651";
 let pixaSearch = `https://pixabay.com/api/?key=${pixaKey}&q=`;
 let category = `&category=food`;
+let type = `&image_type=photo`;
 const btn = document.getElementById("search-btn");
 const input = document.querySelector("input");
 const main = document.body.querySelector("main");
@@ -20,7 +21,7 @@ btn.addEventListener("click", runSearch);
 
 function updateSearch(text) {
 	searchRequest = `${url}q=${input.value}`;
-	pSearch = `${pixaSearch}${input.value}${category}`;
+	pSearch = `${pixaSearch}${input.value}${category}${type}`;
 	input.value = "";
 }
 
@@ -35,6 +36,27 @@ function searchPixabay() {
 			return pics;
 		});
 }
+
+function searchRecipe() {
+	fetch(searchRequest)
+		.then(function(data) {
+			return data.json();
+		})
+		.then(function(data) {
+			recipes = data.results;
+			console.log(recipes);
+			return recipes;
+		})
+		.then(function(recipes) {
+			var pix = 0;
+			for (let i = 0; i < recipes.length; i++) {
+				createCard(recipes[i], pix);
+				pix += 1;
+			}
+		});
+}
+
+// Make Promise =============================================
 
 // Build site =================================================
 
@@ -64,20 +86,7 @@ function runSearch() {
 	if (destroy === true) destroySite();
 	updateSearch();
 	searchPixabay();
-	fetch(searchRequest)
-		.then(function(data) {
-			return data.json();
-		})
-		.then(function(data) {
-			recipes = data.results;
-			console.log(recipes);
-			return recipes;
-		})
-		.then(function(recipes) {
-			var pix = 0;
-			for (let i = 0; i < recipes.length; i++) {
-				createCard(recipes[i], pix);
-				pix += 1;
-			}
-		});
+	return new Promise(function(resolve, reject) {
+		resolve(console.log("this resolved"));
+	}).then(searchRecipe);
 }
