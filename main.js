@@ -1,14 +1,17 @@
+//Globals ========================================================
 let searchRequest = "";
 let pSearch = "";
 let url = `https://proxy.calweb.xyz/http://www.recipepuppy.com/api/?${searchRequest}`;
-
+//PixaBay Globals================================================
 const pixaKey = "6122441-6f3c40a45d200b1e224203651";
 let pixaSearch = `https://pixabay.com/api/?key=${pixaKey}&q=`;
 let category = `&category=food`;
 let type = `&image_type=photo`;
+//Location Globals=============================================
 const btn = document.getElementById("search-btn");
 const input = document.querySelector("input");
 const main = document.body.querySelector("main");
+//State and container globals ==================================
 let destroy = false;
 let recipes = [];
 let pics = [];
@@ -16,6 +19,9 @@ let pics = [];
 // Capture search===============================================
 
 btn.addEventListener("click", runSearch);
+input.addEventListener("keydown", function(event) {
+	if (event.keyCode == 13) runSearch;
+});
 
 // Change Query String==========================================
 
@@ -25,17 +31,7 @@ function updateSearch(text) {
 	input.value = "";
 }
 
-function searchPixabay() {
-	fetch(pSearch)
-		.then(function(data) {
-			return data.json();
-		})
-		.then(function(data) {
-			pics = data.hits;
-			console.log(pics);
-			return pics;
-		});
-}
+// Promise Puppy ===========
 
 function searchRecipe() {
 	fetch(searchRequest)
@@ -56,8 +52,6 @@ function searchRecipe() {
 		});
 }
 
-// Make Promise =============================================
-
 // Build site =================================================
 
 function createCard(recipe, count) {
@@ -70,7 +64,7 @@ function createCard(recipe, count) {
 	destroy = true;
 }
 
-// Destroy site ================================================
+// Destroy site before new search pop===================================
 
 function destroySite() {
 	let recipeArr = document.querySelectorAll(".recipe");
@@ -80,13 +74,18 @@ function destroySite() {
 	}
 }
 
-//Run Fetch/build site==========================================
+// Function that chains promises and builds site====================
 
 function runSearch() {
 	if (destroy === true) destroySite();
 	updateSearch();
-	searchPixabay();
-	return new Promise(function(resolve, reject) {
-		resolve(console.log("this resolved"));
-	}).then(searchRecipe);
+	fetch(pSearch)
+		.then(function(data) {
+			return data.json();
+		})
+		.then(function(data) {
+			pics = data.hits;
+			console.log(pics);
+		})
+		.then(searchRecipe);
 }
