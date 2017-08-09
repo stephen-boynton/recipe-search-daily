@@ -19,9 +19,6 @@ let pics = [];
 // Capture search===============================================
 
 btn.addEventListener("click", runSearch);
-input.addEventListener("keydown", function(event) {
-	if (event.keyCode == 13) runSearch;
-});
 
 // Change Query String==========================================
 
@@ -55,12 +52,15 @@ function searchRecipe() {
 // Build site =================================================
 
 function createCard(recipe, count) {
+	const a = document.createElement("a");
 	const div = document.createElement("div");
+	a.setAttribute("href", recipe.href);
 	div.className = "recipe";
+	a.appendChild(div);
 	div.innerHTML = `<img src=${pics[count].previewURL}>
-  <h1><a href=${recipe.href}>${recipe.title}</a></h1>
+  <h1>${recipe.title}</a></h1>
   <p>Ingredients: ${recipe.ingredients}</p>`;
-	main.appendChild(div);
+	main.appendChild(a);
 	destroy = true;
 }
 
@@ -76,7 +76,7 @@ function destroySite() {
 
 // Function that chains promises and builds site====================
 
-function runSearch() {
+function runSearch(e) {
 	if (destroy === true) destroySite();
 	updateSearch();
 	fetch(pSearch)
@@ -88,4 +88,5 @@ function runSearch() {
 			console.log(pics);
 		})
 		.then(searchRecipe);
+	return false;
 }
