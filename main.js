@@ -69,7 +69,7 @@ function createCard(recipe, count) {
 function destroySite() {
 	let recipeArr = document.querySelectorAll(".recipe");
 	for (let i = 0; i < recipeArr.length; i++) {
-		let recipe = document.querySelector(".recipe");
+		let recipe = document.querySelector("a");
 		main.removeChild(recipe);
 	}
 }
